@@ -1,21 +1,25 @@
 import React, { useEffect,useState,createContext,useContext } from "react";
 import authService from '../services/authService';
-import { useNavigate } from "react-router-dom";
 
 const AuthContext= createContext(null);
 
 export const AuthProvider= ({children})=>{
     const [user,setUser]=useState(null);
     const [loading,setLoading]=useState(true);
-    const navigate=useNavigate();
+    const [isAuthenticated,setIsAuthenticated]=useState(false);
 
     useEffect(()=>{
         const initAuth=async ()=>{
             const storedUser= authService.getCurrentUser();
             const token= authService.getToken();
 
+
+            console.log('AuthContext initAuth - storedUser:', storedUser);
+            console.log('AuthContext initAuth - token:', token);
+
             if(storedUser && token){
                 setUser(storedUser);
+                setIsAuthenticated(true);
             }
             setLoading(false);
         };
@@ -26,12 +30,33 @@ export const AuthProvider= ({children})=>{
     const login=async(email,password)=>{
         setLoading(true);
         try {
-            const data=await authService.login(email,password);
-            setUser(data.user);
+            const response=await authService.login(email,password);
+            const {jwtToken,id,email:userEmail,nombre,apellido,roles}=response;
+
+            const userData={
+                token: jwtToken,
+                id,
+                email:userEmail,
+                nombre,
+                apellido,
+                roles,
+            }
+
+            setUser(userData);
+            setIsAuthenticated(true);
             setLoading(false);
-            return data;
+
+
+
+            console.log('AuthContext login - userData after successful login:', userData);
+            console.log('AuthContext login - isAuthenticated:', true);
+
+
+            return userData;
+
         } catch (error) {
             setUser(null);
+            setIsAuthenticated(false);
             authService.logout();
             setLoading(false);
             throw error;
@@ -41,21 +66,19 @@ export const AuthProvider= ({children})=>{
     const logout = () => {
         authService.logout();
         setUser(null);
-        navigate('/login');
+        setIsAuthenticated(false);
     };
 
     const value = {
         user,
-        isAuthenticated: !!user, // true si hay un usuario logueado
+        isAuthenticated,
         loading,
         login,
         logout,
-        // Puedes añadir una función para verificar roles aquí si la lógica es compleja
-        // hasRole: (role) => user && user.roles && user.roles.includes(role),
     };
 
     if (loading) {
-        return <div>Cargando sesión...</div>; // O un componente de Spinner
+        return <div>Cargando sesión...</div>;
     }
 
     return (
