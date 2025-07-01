@@ -1,4 +1,5 @@
 import axios from "axios";
+import authService from "./authService";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 
@@ -29,6 +30,8 @@ apiClient.interceptors.response.use(
     error => {
         if (error.response && error.response.status === 401) {
             console.error('Unauthorized: Token may be invalid or expired. Redirecting to login...');
+            authService.logout();
+            window.location.href='/login';
         }
         return Promise.reject(error);
     }

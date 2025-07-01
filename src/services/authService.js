@@ -10,13 +10,20 @@ const authService={
                 email,password,
             });
 
-            if(response.data.token){
-                localStorage.setItem('jwtToken',response.data.token);
-                localStorage.setItem('user',JSON.stringify(response.data.user));
+            if(response.data.jwtToken){
+                localStorage.setItem('jwtToken',response.data.jwtToken);
+                const userSt={
+                    id:response.data.id,
+                    email:response.data.email,
+                    nombre:response.data.nombre,
+                    apellido:response.data.apellido,
+                    roles:response.data.roles,
+                }
+                localStorage.setItem('user',JSON.stringify(userSt));
             }
             return response.data;
         }catch(error){
-            console.error('Error during loing: ',error);
+            console.error('Error during loging: ',error);
             throw error;
         }
     },
