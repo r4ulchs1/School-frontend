@@ -6,6 +6,8 @@ import DashboardAdmin from '../pages/admin/DashboardAdmin';
 import DashboardTeacher from '../pages/teacher/DahsboardTeacher';
 import DashboardStudent from '../pages/student/DahsboardStudent';
 import AdminRouter from './AdminRouter';
+import TeacherRouter from './TeacherRouter';
+import StudentRouter from './StudentRouter';
 
 
 function AppRouter(){
@@ -43,7 +45,6 @@ function AppRouter(){
                 }
             />
 
-            //RUTAS DE ADMIN
             <Route path='/admin/*' element={isAuthenticated &&user &&user.roles.includes('ROLE_ADMIN')? 
                 (<DashboardAdmin/>) : 
                 (<Navigate to='/login' replace/>)}
@@ -55,11 +56,17 @@ function AppRouter(){
             <Route path='/teacher/*' element={isAuthenticated &&user &&user.roles.includes('ROLE_DOCENTE')? 
                 (<DashboardTeacher/>) : 
                 (<Navigate to='/login' replace/>)}
-            />
+            >
+                <Route path='*' element={<TeacherRouter/>}/>
+            </Route>
+
+            
             <Route path='/student/*' element={isAuthenticated &&user &&user.roles.includes('ROLE_ALUMNO')? 
                 (<DashboardStudent/>) : 
                 (<Navigate to='/login' replace/>)}
-            />
+            >
+                <Route path='*' element={<StudentRouter/>}/>
+            </Route>
 
 
 

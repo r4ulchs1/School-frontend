@@ -62,23 +62,25 @@ const userService = {
             throw error;
         }
     },
-
-    enrollStudentInCourse: async (alumnoId, cursoId) => {
+    //MATRRICULAR
+    inscribirAlumnoEnCurso: async (alumnoId, cursoId) => {
         try {
-            const response = await apiClient.post(`${USER_API_URL}/${alumnoId}/inscribir/${cursoId}`);
+            const response = await apiClient.post(`/usuarios/${alumnoId}/inscribir/${cursoId}`);
+            console.log(`Alumno ${alumnoId} inscrito en curso ${cursoId}`);
             return response.data;
         } catch (error) {
-            console.error(`Error enrolling student ${alumnoId} in course ${cursoId}:`, error);
+            console.error(`Error al inscribir alumno ${alumnoId} en curso ${cursoId}:`, error);
             throw error;
         }
     },
 
-    unenrollStudentFromCourse: async (alumnoId, cursoId) => {
+    desinscribirAlumnoDeCurso: async (alumnoId, cursoId) => {
         try {
-            const response = await apiClient.delete(`${USER_API_URL}/${alumnoId}/desinscribir/${cursoId}`);
+            const response = await apiClient.delete(`/usuarios/${alumnoId}/desinscribir/${cursoId}`);
+            console.log(`Alumno ${alumnoId} desinscrito de curso ${cursoId}`);
             return response.data;
         } catch (error) {
-            console.error(`Error unenrolling student ${alumnoId} from course ${cursoId}:`, error);
+            console.error(`Error al desinscribir alumno ${alumnoId} de curso ${cursoId}:`, error);
             throw error;
         }
     },
